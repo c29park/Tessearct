@@ -1,14 +1,14 @@
 # Tiny Tapeout project information
 project:
-  title:        ""      # Project title
-  author:       ""      # Your name
-  discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  ""      # One line description of what your project does
-  language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     0       # Clock frequency in Hz (or 0 if not applicable)
+  title:        "4D Tesseract VGA Demo"      # Project title
+  author:       "Chris Park"                 # Your name
+  discord:      ""                           # Your discord username (optional)
+  description:  "Renders a rotating 4D tesseract on a 640x480 VGA display using on-chip projection math."  # One line description
+  language:     "Verilog"                    # HDL used
+  clock_hz:     25000000                     # ~25 MHz pixel clock
 
   # How many tiles your design occupies? A single tile is about 167x108 uM.
-  tiles: "1x1"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
+  tiles: "1x1"                               # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
 
   # Your top module name must start with "tt_um_". Make it unique by including your github username:
   top_module:  "tt_um_example"
@@ -22,7 +22,7 @@ project:
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
-  # Inputs
+  # Inputs (unused)
   ui[0]: ""
   ui[1]: ""
   ui[2]: ""
@@ -33,16 +33,17 @@ pinout:
   ui[7]: ""
 
   # Outputs
-  uo[0]: ""
-  uo[1]: ""
-  uo[2]: ""
-  uo[3]: ""
-  uo[4]: ""
-  uo[5]: ""
-  uo[6]: ""
-  uo[7]: ""
+  # uo_out = {hsync, B0, G0, R0, vsync, B1, G1, R1}
+  uo[0]: "VGA_R1"        # Red MSB
+  uo[1]: "VGA_G1"        # Green MSB
+  uo[2]: "VGA_B1"        # Blue MSB
+  uo[3]: "VGA_VSYNC"     # Vertical sync
+  uo[4]: "VGA_R0"        # Red LSB
+  uo[5]: "VGA_G0"        # Green LSB
+  uo[6]: "VGA_B0"        # Blue LSB
+  uo[7]: "VGA_HSYNC"     # Horizontal sync
 
-  # Bidirectional pins
+  # Bidirectional pins (unused)
   uio[0]: ""
   uio[1]: ""
   uio[2]: ""
