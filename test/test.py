@@ -1,3 +1,10 @@
+# test_tt_um_example.py
+#
+# Cocotb-based Tiny Tapeout testbench for tt_um_example.
+# Verifies that for each ui_in switch pattern, the design:
+#   - comes out of reset cleanly (no X/Z on outputs),
+#   - produces toggling VGA hsync/vsync over time.
+
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, Timer
@@ -17,7 +24,12 @@ async def reset_dut(dut):
 
 
 async def run_for_switch(dut, switch_value: int, cycles: int = 2000):
-    """Drive a specific ui_in value, reset, then run and sanity-check outputs."""
+    """
+    Drive a specific ui_in value, reset, then run and sanity-check outputs.
+    Ensures:
+      - no X/Z on uo_out, uio_out, uio_oe
+      - hsync and vsync both toggle at least once
+    """
     dut.ui_in.value = switch_value
 
     # pulse reset so internal state is deterministic for this switch setting
@@ -35,8 +47,8 @@ async def run_for_switch(dut, switch_value: int, cycles: int = 2000):
     val = dut.uo_out.value
     assert val.is_resolvable, "uo_out has X/Z right after reset"
     prev_int = int(val)
-    prev_hsync = (prev_int >> 7) & 1
-    prev_vsync = (prev_int >> 4) & 1
+    prev_hsync = (prev_int >> 7) & 1  # uo_out[7] = hsync
+    prev_vsync = (prev_int >> 4) & 1  # uo_out[4] = vsync
 
     for _ in range(cycles):
         await RisingEdge(dut.clk)
@@ -65,7 +77,7 @@ async def run_for_switch(dut, switch_value: int, cycles: int = 2000):
 @cocotb.test()
 async def test_each_switch(dut):
     """
-    Tiny Tapeout cocotb test for tt_um_vga_example.
+    Tiny Tapeout cocotb test for tt_um_example.
 
     For each of the 8 switches (ui_in[0]..ui_in[7]):
       * drive only that bit high
@@ -73,6 +85,7 @@ async def test_each_switch(dut):
       * run for a while
       * ensure outputs are well-defined (no X/Z)
       * ensure VGA syncs are toggling
+    Also tests the 'all switches off' case.
     """
 
     # start clock
